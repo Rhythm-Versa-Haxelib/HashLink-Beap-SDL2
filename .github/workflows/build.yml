@@ -167,7 +167,9 @@ jobs:
           darwin)
             if [ "${{matrix.build_system}}" != "cmake" ]; then
               brew update
-              brew bundle
+              brew bundle || true
+              brew link --overwrite python@3.13 2>/dev/null || true
+              brew link --overwrite python 2>/dev/null || true
             fi
             ;;
 
