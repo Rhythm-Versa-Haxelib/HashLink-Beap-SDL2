@@ -146,6 +146,23 @@ int wmain(int argc, uchar *argv[]) {
 #else
 int main(int argc, char *argv[]) {
 #endif
+#if defined(HL_WIN_DESKTOP)
+	{
+		WCHAR libPath[MAX_PATH];
+		GetModuleFileNameW(NULL, libPath, MAX_PATH);
+		WCHAR *lastSlash = wcsrchr(libPath, L'\\');
+		if (lastSlash) {
+			SetDllDirectoryW(NULL);
+			wcscpy(lastSlash + 1, L"lib");
+			WCHAR newPath[32768];
+			wcscpy(newPath, libPath);
+			wcscat(newPath, L";");
+			if (GetEnvironmentVariableW(L"PATH", newPath + wcslen(newPath), 32768 - (DWORD)wcslen(newPath)) == 0)
+				newPath[wcslen(newPath) - 1] = 0;
+			SetEnvironmentVariableW(L"PATH", newPath);
+		}
+	}
+#endif
 	vdynamic *ret;
 	bool isExc = false;
 	hl_type_fun tf = { 0 };
